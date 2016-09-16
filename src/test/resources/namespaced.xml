@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<documentNode xmlns="http://www.example.com" xmlns:ex2="http://www.example2.com">
+	<ex2:basicNode attribute="basicValue">text content</ex2:basicNode>
+	<ex2:complexNode attribute="complexValue">
+		<child1>child1 text</child1>
+		<child2>child2 text</child2>
+		<uri>http://www.example.com</uri>
+	</ex2:complexNode>
+</documentNode>
