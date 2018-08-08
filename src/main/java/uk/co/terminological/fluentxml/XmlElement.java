@@ -85,6 +85,14 @@ public class XmlElement extends XmlNode {
 		return attributes().stream();
 	}
 	
+	public String getAttributeValue(String attr, URI namespace) {
+		return ((Element) this.getRaw()).getAttributeNS(namespace.toString(), attr);
+	}
+	
+	public String getAttributeValue(String attr) {
+		return ((Element) this.getRaw()).getAttribute(attr);
+	}
+	
 	public XmlElement withAttribute(String attr, URI namespace, String value) {
 		withAttribute(attr, Optional.of(namespace)).setValue(value);
 		return this;

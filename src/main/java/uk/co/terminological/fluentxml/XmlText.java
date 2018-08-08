@@ -26,7 +26,7 @@ public class XmlText extends XmlNode {
 	}
 
 	public static XmlText from(Node textNode) {
-		if (textNode.getNodeType() != Node.TEXT_NODE) throw new ClassCastException("Not a text node");
+		if (textNode.getNodeType() != Node.TEXT_NODE && textNode.getNodeType() != Node.CDATA_SECTION_NODE) throw new ClassCastException("Not a text node");
 		return new XmlText(Xml.fromDom(textNode.getOwnerDocument()), (Node) textNode);
 	}
 	

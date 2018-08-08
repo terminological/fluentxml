@@ -86,7 +86,7 @@ public class XmlNode {
 			return new XmlElement(xml, (Element) node);
 		} else if (node.getNodeType() == Node.ATTRIBUTE_NODE) {
 			return new XmlAttribute(xml, (Attr) node);
-		} else if (node.getNodeType() == Node.TEXT_NODE) {
+		} else if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
 			return new XmlText(xml, (Node) node);
 		} else {
 			return new XmlNode(xml, node);

@@ -587,4 +587,8 @@
 	</xsl:choose>
 </xsl:template>
 
+<!--- Remove script tags. - -->
+<xsl:template match="script">
+</xsl:template>
+
 </xsl:stylesheet>

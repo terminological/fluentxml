@@ -34,7 +34,7 @@ public class XmlList<T extends XmlNode> implements Iterable<T> {
 					cache.add((T) XmlElement.from(xml, node));
 				} else if (node instanceof Attr) {
 					cache.add((T) XmlAttribute.from(xml, node));
-				} else if (node instanceof Text) {
+				} else if (Text.class.isAssignableFrom(node.getClass())) { //node instanceof Text) {
 					cache.add((T) XmlText.from(xml, node));
 				} else {
 					cache.add((T) XmlNode.from(xml, node));
