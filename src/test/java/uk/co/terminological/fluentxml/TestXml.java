@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -41,6 +42,17 @@ public class TestXml {
 			assertFalse(xml.content().getNs().isPresent());
 		}
 	}
+	
+	@Test
+	public void testTreeWalker() throws XmlException {
+		log.debug("Loading xml");
+		Xml xml = Xml.fromStream(TestXml.class.getResourceAsStream("/schemaLess.xml"));
+		xml.content().walkTree().stream().forEach(n -> log.debug(n.getClass().toGenericString()));
+		String content = xml.content().walkTree(XmlText.class).stream().map(xt -> xt.getValue()).collect(Collectors.joining());
+		log.debug(content);
+		assertTrue(content.trim().startsWith("text content"));
+		assertTrue(content.trim().endsWith("example.com"));
+		}
 
 	@Test
 	public void testFromHtml() throws XmlException {

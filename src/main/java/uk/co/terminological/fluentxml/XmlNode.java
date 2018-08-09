@@ -6,6 +6,10 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+import org.w3c.dom.traversal.DocumentTraversal;
+import org.w3c.dom.traversal.NodeFilter;
+import org.w3c.dom.traversal.NodeIterator;
 
 public class XmlNode {
 
@@ -141,8 +145,63 @@ public class XmlNode {
 		return out.toString();
 	}
 	
+	public XmlList<XmlNode> walkTree() {
+		return walkTree(XmlNode.class);
+	}
+	
+	public <X extends XmlNode> XmlList<X> walkTree(Class<X> type) {
+		
+		int whatToShow = NodeFilter.SHOW_ALL;
+		if (XmlElement.class.isAssignableFrom(type)) whatToShow = NodeFilter.SHOW_ELEMENT;
+		if (XmlText.class.isAssignableFrom(type)) whatToShow = NodeFilter.SHOW_TEXT;
+		if (XmlAttribute.class.isAssignableFrom(type)) whatToShow = NodeFilter.SHOW_ATTRIBUTE;
+		
+		DocumentTraversal traversal = (DocumentTraversal) getDom();
+		 
+	    NodeIterator iterator = traversal.createNodeIterator(
+	      this.getRaw(), whatToShow, null, true);
+	    try {
+			return new XmlList<X>().addAll(iterator, getXml());
+		} catch (XmlException e) {
+			// This type casting exception has been checked for by above
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public boolean equals(XmlNode other) {
 		if (other == null) return false;
 		else return this.getRaw().equals(other.getRaw());
+	}
+	
+	public <Y extends XmlNode> boolean is(Class<Y> type) {
+		return type.isAssignableFrom(getClass());
+	}
+	
+	public <Y extends XmlNode> Y as(Class<Y> type) {
+		try {
+			return cast(type);
+		} catch (XmlException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends XmlNode> T cast(Class<T> type) throws XmlException {
+		Node node = this.getRaw();
+		try {
+			if (node instanceof Document) {
+				return (T) Xml.fromDom((Document) node).content();
+			} else if (node instanceof Element) {
+				return (T) XmlElement.from(xml, node);
+			} else if (node instanceof Attr) {
+				return (T) XmlAttribute.from(xml, node);
+			} else if (Text.class.isAssignableFrom(node.getClass())) { 
+				return (T) XmlText.from(xml, node);
+			} else {
+				return (T) XmlNode.from(xml, node);
+			}
+		} catch (ClassCastException e) {
+			throw new XmlException("Incorrect type for list: ",e);
+		}
 	}
 }

@@ -13,6 +13,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.w3c.dom.traversal.NodeIterator;
 
 public class XmlList<T extends XmlNode> implements Iterable<T> {
 
@@ -24,25 +25,40 @@ public class XmlList<T extends XmlNode> implements Iterable<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void addAll(Iterator<Item> iterator, Xml xml) throws XmlException {
+	private T convertNode(Node node, Xml xml) throws XmlException {
+		//TODO move somewhere else.
+		try {
+			if (node instanceof Document) {
+				return (T) Xml.fromDom((Document) node).content();
+			} else if (node instanceof Element) {
+				return (T) XmlElement.from(xml, node);
+			} else if (node instanceof Attr) {
+				return (T) XmlAttribute.from(xml, node);
+			} else if (Text.class.isAssignableFrom(node.getClass())) { //node instanceof Text) {
+				return (T) XmlText.from(xml, node);
+			} else {
+				return (T) XmlNode.from(xml, node);
+			}
+		} catch (ClassCastException e) {
+			throw new XmlException("Incorrect type for list: ",e);
+		}
+	}
+	
+	protected XmlList<T> addAll(Iterator<Item> iterator, Xml xml) throws XmlException {
 		while (iterator.hasNext()) {
 			Node node = (Node) iterator.next().getNativeValue();
-			try {
-				if (node instanceof Document) {
-					cache.add((T) Xml.fromDom((Document) node).content());
-				} else if (node instanceof Element) {
-					cache.add((T) XmlElement.from(xml, node));
-				} else if (node instanceof Attr) {
-					cache.add((T) XmlAttribute.from(xml, node));
-				} else if (Text.class.isAssignableFrom(node.getClass())) { //node instanceof Text) {
-					cache.add((T) XmlText.from(xml, node));
-				} else {
-					cache.add((T) XmlNode.from(xml, node));
-				}
-			} catch (ClassCastException e) {
-				throw new XmlException("Incorrect type for list: ",e);
-			}
+			cache.add(convertNode(node,xml));
 		}
+		return this;
+	}
+	
+	protected XmlList<T> addAll(NodeIterator it, Xml xml) throws XmlException {
+		Node node = it.nextNode();
+		while (node != null) {
+			cache.add(convertNode(node,xml));
+			node = it.nextNode();
+		}
+		return this;
 	}
 
 	public int size() {return cache.size();}
