@@ -338,7 +338,7 @@ public class Xml {
 			@Override
 			public InputSource resolveEntity(String publicId, String systemId)
 					throws SAXException, IOException {
-				System.out.println("Ignoring " + publicId + ", " + systemId);
+				log.debug("Ignoring xml entity: " + publicId + ", " + systemId);
 				return new InputSource(new StringReader(""));
 			}
 		};
