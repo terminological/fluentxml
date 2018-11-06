@@ -65,6 +65,10 @@ public class XmlElement extends XmlNode {
 		return XmlList.create(XmlElement.class,((Element) this.getRaw()).getChildNodes());
 	}
 	
+	public XmlList<XmlElement> childElements(String tagName) {
+		return XmlList.create(XmlElement.class,((Element) this.getRaw()).getElementsByTagName(tagName));
+	}
+	
 	public Stream<XmlElement> streamChildElements() {
 		return childElements().stream();
 	}
@@ -85,12 +89,16 @@ public class XmlElement extends XmlNode {
 		return attributes().stream();
 	}
 	
-	public String getAttributeValue(String attr, URI namespace) {
-		return ((Element) this.getRaw()).getAttributeNS(namespace.toString(), attr);
+	public Optional<String> getAttributeValue(String attr, URI namespace) {
+		String tmp = ((Element) this.getRaw()).getAttributeNS(namespace.toString(), attr);
+		if (tmp=="") return Optional.empty();
+		return Optional.of(tmp);
 	}
 	
-	public String getAttributeValue(String attr) {
-		return ((Element) this.getRaw()).getAttribute(attr);
+	public Optional<String> getAttributeValue(String attr) {
+		String tmp =  ((Element) this.getRaw()).getAttribute(attr);
+		if (tmp=="") return Optional.empty();
+		return Optional.of(tmp);
 	}
 	
 	public XmlElement withAttribute(String attr, URI namespace, String value) {
@@ -150,4 +158,6 @@ public class XmlElement extends XmlNode {
 	}
 	
 	public String getName() { return rawContext.getNodeName(); }
+	
+	
 }

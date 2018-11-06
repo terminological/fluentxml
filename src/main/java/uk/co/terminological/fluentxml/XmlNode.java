@@ -1,6 +1,7 @@
 package uk.co.terminological.fluentxml;
 
 import java.io.File;
+import java.util.Optional;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -203,5 +204,9 @@ public class XmlNode {
 		} catch (ClassCastException e) {
 			throw new XmlException("Incorrect type for list: ",e);
 		}
+	}
+	
+	public Optional<String> getTextContent() {
+		return Optional.ofNullable(this.rawContext.getTextContent());
 	}
 }
