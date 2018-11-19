@@ -1,6 +1,7 @@
 package uk.co.terminological.fluentxml;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Optional;
 
 import org.w3c.dom.Attr;
@@ -39,7 +40,12 @@ public class XmlNode {
 	}
 	
 	//Fluent actions
-	
+	/**
+	 * If this is an XmlElement this will give a String rendering of the XML fragment for the current element, 
+	 * otherwise an Xml fragment for the parent element -i.e. the {@link #outerXml()} method.
+	 * 
+	 * If the string content of a node is needed the the {@link #getTextContent()} method is needed
+	 */
 	public String toString() {
 		try {
 			if (this instanceof XmlElement) {
@@ -206,7 +212,21 @@ public class XmlNode {
 		}
 	}
 	
+	/**
+	 * get the text representation of the node. It is also possible to get this by a {@link #doTransform()} and more options exist for the output of that.
+	 * @return
+	 */
 	public Optional<String> getTextContent() {
 		return Optional.ofNullable(this.rawContext.getTextContent());
+	}
+	
+	/**
+	 * Writes the current node to the output stream by doing a {@link #doTransform()} and
+	 * setting the stream output source to the given output stream.
+	 * @param out
+	 * @throws XmlException
+	 */
+	public void write(OutputStream out) throws XmlException {
+		this.doTransform().write(out);
 	}
 }
