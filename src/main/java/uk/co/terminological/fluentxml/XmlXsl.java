@@ -46,26 +46,42 @@ public class XmlXsl<T extends XmlNode> {
 		}
 	}
 	
+	/**
+	 * @return Set an input parameter to the XSLT stylesheet 
+	 */
 	public XmlXsl<T> withProperty(String name, String value) {
 		transformer.setParameter(name, value);
 		return this;
 	}
+	
+	/**
+	 * @return Set the transformer to return unformatted xml 
+	 */
 	
 	public XmlXsl<T> unformatted() {
 		transformer.setOutputProperty(OutputKeys.INDENT, "no");
 		return this;
 	}
 	
+	/**
+	 * @return Set the transformer to return text 
+	 */
 	public XmlXsl<T> text() {
 		transformer.setOutputProperty(OutputKeys.METHOD, "text");
 		return this;
 	}
 	
+	/**
+	 * @return Set the transformer to return xml 
+	 */
 	public XmlXsl<T> xml() {
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 		return this;
 	}
 	
+	/**
+	 * @return Set the transformer to return an Xml fragment (i.e. without Xml declaration) 
+	 */
 	public XmlXsl<T> fragment() {
 		transformer.setOutputProperty(OutputKeys.STANDALONE, "omit");
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -81,6 +97,10 @@ public class XmlXsl<T extends XmlNode> {
 		}
 	}
 	
+	/**
+	 * @return A fluent Xml object of the transformer output
+	 * @throws XmlException
+	 */
 	public Xml toDocument() throws TransformerException {
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 		Xml out = Xml.create();
@@ -90,6 +110,10 @@ public class XmlXsl<T extends XmlNode> {
 		return out;
 	}
 	
+	/**
+	 * @return A plain text representation of the transformer output when the output is not Xml
+	 * @throws XmlException
+	 */
 	public String asString() throws XmlException {
 		transformer.setOutputProperty(OutputKeys.METHOD, "text");
 		StringWriter out = new StringWriter();
@@ -98,6 +122,10 @@ public class XmlXsl<T extends XmlNode> {
 		return out.toString();
 	}
 	
+	/**
+	 * @return A string representation of the Xml of the transformer output
+	 * @throws XmlException
+	 */
 	public String asXml() throws XmlException {
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 		StringWriter out = new StringWriter();
@@ -106,6 +134,10 @@ public class XmlXsl<T extends XmlNode> {
 		return out.toString();
 	}
 	
+	/**
+	 * Writes the string representation of the Xml of the transformer output to a file
+	 * @throws XmlException
+	 */
 	public void toFile(File out) throws XmlException {
 		out.getParentFile().mkdirs();
 		StreamResult result;
@@ -121,6 +153,10 @@ public class XmlXsl<T extends XmlNode> {
 		
 	}
 
+	/**
+	 * Writes the string representation of the Xml of the transformer output to an output stream
+	 * @throws XmlException
+	 */
 	public void write(OutputStream out) throws XmlException {
 		StreamResult result = new StreamResult(out);
 		toStream(result);

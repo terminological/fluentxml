@@ -26,6 +26,9 @@ public class XmlNode {
 		return xml;
 	}
 	
+	/**
+	 * @return the raw DOM node underlying this
+	 */
 	public Node getAsNode() {
 		return rawContext;
 	}
@@ -39,12 +42,13 @@ public class XmlNode {
 		this.rawContext = node;
 	}
 	
-	//Fluent actions
 	/**
 	 * If this is an XmlElement this will give a String rendering of the XML fragment for the current element, 
 	 * otherwise an Xml fragment for the parent element -i.e. the {@link #outerXml()} method.
+	 * <br/>
+	 * If the string content of a node is needed  use the {@link #getTextContent()} method instead
 	 * 
-	 * If the string content of a node is needed the the {@link #getTextContent()} method is needed
+	 * @return a string representation of the Xml for XmlElement or the text content for other node types.
 	 */
 	public String toString() {
 		try {
@@ -58,6 +62,9 @@ public class XmlNode {
 		}
 	}
 	
+	/**
+	 * @return a string representation of this Xml.
+	 */
 	public String outerXml() {
 		try {
 			return doTransform().fragment().asXml();
@@ -66,14 +73,28 @@ public class XmlNode {
 		}
 	}
 	
+	/**
+	 * @return an empty XmlXsl transformer on this node performing an identity transform - this is using an empty {@link javax.xml.transform.Transformer}
+	 * @throws XmlException
+	 */
 	public XmlXsl<? extends XmlNode> doTransform() throws XmlException {
 		return doTransform((File) null);
 	}
 	
+	/**
+	 * @return an empty XmlXsl transformer on this node with an XSLT from the file
+	 * @throws XmlException
+	 */
 	public XmlXsl<? extends XmlNode> doTransform(File xslt) throws XmlException {
 		return XmlNode.xslt(this, xslt);
 	}
 
+	/**
+	 * Perform an xpath query on this node and return the result
+	 * @param xpath
+	 * @return an XmlXpath containing the result
+	 * @throws XmlException
+	 */
 	public XmlXPath<? extends XmlNode> doXpath(String xpath) throws XmlException {
 		return XmlNode.xpath(this, xpath);
 	}
@@ -90,6 +111,11 @@ public class XmlNode {
 		return new XmlXPath<T>(node, xpath, defNsAbbr);
 	}
 	
+	/**
+	 * @return Wraps a Dom node into a fluent XmlNode
+	 * @param xml - the current document
+	 * @param node - the Dom Node
+	 */
 	public static XmlNode from(Xml xml, Node node) {
 		if (node.getNodeType() == Node.DOCUMENT_NODE) {
 			return new XmlDocElement(xml, (Element) node);
@@ -104,6 +130,10 @@ public class XmlNode {
 		}
 	}
 	
+	/**
+	 * @return Wraps a Dom node into a fluent XmlNode
+	 * @param node - the Dom Node
+	 */
 	public static XmlNode from(Node node) {
 		if (node.getNodeType() == Node.DOCUMENT_NODE) {
 			return from(Xml.fromDom((Document) node), (Element) node);
@@ -112,6 +142,9 @@ public class XmlNode {
 		} 
 	}
 	
+	/**
+	 * @return Wraps a string representation of the xpath to the current node including the index of the node
+	 */
 	public String getXPath() {
 		Node node = rawContext;
 		if (node.getNodeType() == Node.ELEMENT_NODE ) return xpathFromElement((Element) node);
@@ -152,10 +185,18 @@ public class XmlNode {
 		return out.toString();
 	}
 	
+	/**
+	 * @return a XmlList of XmlNodes in tree walking order
+	 */
 	public XmlList<XmlNode> walkTree() {
 		return walkTree(XmlNode.class);
 	}
 	
+	/**
+	 * 
+	 * @param type - The desired type of returned node e.g. XmlElement.class
+	 * @return an XmlList of XmlNodes in tree walking order where the nodes are all of the given type
+	 */
 	public <X extends XmlNode> XmlList<X> walkTree(Class<X> type) {
 		
 		int whatToShow = NodeFilter.SHOW_ALL;
@@ -175,15 +216,25 @@ public class XmlNode {
 		}
 	}
 	
+	/**
+	 * @return equality is delegated to DOM's {@link Node}.equals()
+	 */
 	public boolean equals(XmlNode other) {
 		if (other == null) return false;
 		else return this.getRaw().equals(other.getRaw());
 	}
 	
+	/**
+	 * @return checks the type of this node without resorting to DOM e.g. XmlElement.class
+	 */
 	public <Y extends XmlNode> boolean is(Class<Y> type) {
 		return type.isAssignableFrom(getClass());
 	}
 	
+	/**
+	 * @return an unchecked cast of this node to the specified type e.g. XmlElement.class
+	 * @throws this method will throw a RuntimeException if it cannot be cast.
+	 */
 	public <Y extends XmlNode> Y as(Class<Y> type) {
 		try {
 			return cast(type);
@@ -192,6 +243,10 @@ public class XmlNode {
 		}
 	}
 	
+	/**
+	 * @return a checked cast of this node to the specified type e.g. XmlElement.class
+	 * @throws this method will throw an XmlException if it cannot be cast.
+	 */
 	@SuppressWarnings("unchecked")
 	public <T extends XmlNode> T cast(Class<T> type) throws XmlException {
 		Node node = this.getRaw();
@@ -213,7 +268,7 @@ public class XmlNode {
 	}
 	
 	/**
-	 * get the text representation of the node. It is also possible to get this by a {@link #doTransform()} and more options exist for the output of that.
+	 * get the text content of the node as per w3c DOM.getTextContent() method. 
 	 * @return
 	 */
 	public Optional<String> getTextContent() {
