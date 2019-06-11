@@ -39,14 +39,21 @@
 
 	<!--- Turn block level elements into text-only. - -->
 	<xsl:template match="p|ol|ul|pre|address|blockquote|dl|div|fieldset|form|noscript">
-		<xsl:apply-templates select="text()|*" />
 		<xsl:value-of select="$new-line" />
+		<xsl:apply-templates select="text()|*" />
+	</xsl:template>
+
+	<!--- Turn List items into bracketed values. - -->
+	<xsl:template match="li">
+		<xsl:value-of select="$new-line" />
+		<xsl:text>* </xsl:text>
+		<xsl:apply-templates select="text()|*" />
 	</xsl:template>
 
 	<!--- Add new line after table. - -->
 	<xsl:template match="table">
-		<xsl:apply-templates select="*" />
 		<xsl:value-of select="$new-line" />
+		<xsl:apply-templates select="*" />
 	</xsl:template>
 
 	<!--- Turn table rows into bracketed values. - -->
@@ -64,8 +71,8 @@
 	<!--- Strip out any inline tags (and start them off with an initial space 
 		so that nested and sibling tags don't get concatenated text). - -->
 	<xsl:template match="a|abbr|acronym|b|bdo|big|button|cite|code|dfn|em|i|img|input|kbd|label|map|object|q|samp|select|small|span|strong|sub|sup|textarea|time|tt|var">
-		<!-- <xsl:text> </xsl:text>-->
 		<xsl:value-of select="text()" />
+		<xsl:text> </xsl:text>
 	</xsl:template>
 
 	<!--- Replace hrule with manual dashes. NOTE: template also named for manual 
