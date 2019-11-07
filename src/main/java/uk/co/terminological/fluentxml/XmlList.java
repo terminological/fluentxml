@@ -86,6 +86,7 @@ public class XmlList<T extends XmlNode> implements Iterable<T> {
 		return doXpath(xpath,"ns");
 	}
 	
+	
 	public XmlXPath<T> doXpath(String xpath, String defNsAbbr) throws XmlException {
 		return new XmlXPath<T>(this, xpath, defNsAbbr);
 	}

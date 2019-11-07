@@ -119,8 +119,19 @@
 			<artifactId>htmlcleaner</artifactId>
 			<version>2.6.1</version>
 		</dependency>
-		
+		<dependency>
+	    	<groupId>com.github.sam-rosenthal</groupId>
+	    	<artifactId>java-cssSelector-to-xpath</artifactId>
+	    	<version>V1.0.0RC1</version>
+		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>

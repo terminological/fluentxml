@@ -34,7 +34,7 @@ public class XmlAttribute extends XmlNode {
 	public XmlXPath<XmlAttribute> doXpath(String xpath) throws XmlException {
 		return XmlNode.xpath(this, xpath);
 	}
-
+	
 	public static XmlAttribute from(Attr attr) {
 		return new XmlAttribute(Xml.fromDom(attr.getOwnerDocument()), attr);
 	}
