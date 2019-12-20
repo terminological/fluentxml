@@ -166,9 +166,10 @@ public class XmlXPath<T extends XmlNode> {
 		final ResultSequence result = expr.evaluate(new DynamicContextBuilder(con),
 				rawNodeArray(context));
 		return new Iterable<Object>() {
-			final Iterator<Item> items = result.iterator();
+			final ResultSequence result2 = result;
 			@Override
 			public Iterator<Object> iterator() {
+				final Iterator<Item> items = result2.iterator();
 				return new Iterator<Object>() {
 					@Override
 					public boolean hasNext() {
