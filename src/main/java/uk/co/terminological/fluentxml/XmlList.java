@@ -2,6 +2,7 @@ package uk.co.terminological.fluentxml;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -93,6 +94,10 @@ public class XmlList<T extends XmlNode> implements Iterable<T> {
 	
 	public Stream<T> stream() {
 		return cache.stream();
+	}
+	
+	public List<T> list() {
+		return cache;
 	}
 	
 	public Optional<T> findFirst() {
