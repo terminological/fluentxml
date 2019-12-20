@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>uk.co.terminological</groupId>
+	<groupId>com.github.terminological</groupId>
 	<artifactId>fluentxml</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>xml-plugin Maven Plugin</name>
@@ -17,27 +18,27 @@
 
 	<dependencies>
 
-	<!-- https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j -->
-    <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>2.3.0</version>
-    </dependency>
-    <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>2.3.0</version>
-    </dependency>
-    <dependency>
-        <groupId>org.glassfish.jaxb</groupId>
-        <artifactId>jaxb-runtime</artifactId>
-        <version>2.3.0</version>
-    </dependency>
-    <dependency>
-        <groupId>javax.activation</groupId>
-        <artifactId>activation</artifactId>
-        <version>1.1.1</version>
-    </dependency>
+		<!-- https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>
@@ -115,16 +116,16 @@
 			<version>2.6.1</version>
 		</dependency>
 		<dependency>
-	    	<groupId>com.github.sam-rosenthal</groupId>
-	    	<artifactId>java-cssSelector-to-xpath</artifactId>
-	    	<version>V1.0.0RC1</version>
+			<groupId>com.github.sam-rosenthal</groupId>
+			<artifactId>java-cssSelector-to-xpath</artifactId>
+			<version>V1.0.0RC1</version>
 		</dependency>
 	</dependencies>
 
 	<repositories>
 		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 
