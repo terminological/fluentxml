@@ -5,8 +5,8 @@
 
 	<groupId>com.github.terminological</groupId>
 	<artifactId>fluentxml</artifactId>
-	<version>1.01</version>
-<!-- 	<version>master-SNAPSHOT</version> -->
+<!-- 	<version>1.01</version> -->
+	<version>master-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>xml-plugin Maven Plugin</name>
