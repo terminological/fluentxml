@@ -120,11 +120,11 @@
 			<artifactId>java-cssSelector-to-xpath</artifactId>
 			<version>V1.0.0RC1</version>
 			<exclusions>
-			<exclusion>
-	      <groupId>org.slf4j</groupId>
-	      <artifactId>slf4j-simple</artifactId>
-	      </exclusion>
-	      </exclusions>
+				<exclusion>
+		      		<groupId>org.slf4j</groupId>
+		      		<artifactId>slf4j-simple</artifactId>
+		      	</exclusion>
+		      </exclusions>
 		</dependency>
 	</dependencies>
 
