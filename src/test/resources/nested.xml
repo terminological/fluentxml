@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nested>
+    <level1 name="first">
+        <level2 name="a">
+            <level3 name="x">leaf content</level3>
+            <level3 name="y">more leaf</level3>
+        </level2>
+        <level2 name="b">
+            <level3 name="z">another leaf</level3>
+        </level2>
+    </level1>
+    <level1 name="second">
+        <level2 name="c">
+            <level3 name="w">final leaf</level3>
+        </level2>
+    </level1>
+</nested>

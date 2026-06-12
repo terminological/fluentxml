@@ -1,5 +1,8 @@
 package uk.co.terminological.maven;
 /**
+ * Maven plugin goal: xmltojava - Generates JAXB Java source from XML examples.
+ * Uses Castor to derive XSD, then CXF xsdtojava for JAXB generation.
+ * @see XmlJavaExecution
  * Heavily modified
  * 
  * Copyright (c) 2007 Espen Wiborg <espenhw@grumblesmurf.org>

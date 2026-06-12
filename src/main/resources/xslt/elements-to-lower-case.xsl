@@ -14,5 +14,4 @@
 		</xsl:element>
 	</xsl:template>
 
-</xsl:stylesheet>   
-    
+</xsl:stylesheet>

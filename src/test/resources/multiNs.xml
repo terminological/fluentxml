@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:ex="http://example.com/ns1" xmlns:ex2="http://example.com/ns2">
+    <ex:item ex:id="1">Item 1 content</ex:item>
+    <ex:item ex:id="2">Item 2 content</ex:item>
+    <ex2:other>Other content</ex2:other>
+    <plain>Plain content</plain>
+</root>

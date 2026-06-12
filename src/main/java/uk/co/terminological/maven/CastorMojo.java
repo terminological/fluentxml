@@ -1,5 +1,7 @@
 package uk.co.terminological.maven;
 /**
+ * Maven plugin goal: castor - Derives a W3C XML Schema from a sample XML file.
+ * @see XmlToJavaMojo
  * Heavily modified
  * 
  * Copyright (c) 2007 Espen Wiborg <espenhw@grumblesmurf.org>
