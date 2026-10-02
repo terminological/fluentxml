@@ -16,6 +16,36 @@
 	<name>FluentXML</name>
 	<description>Fluent XML API for building, querying, transforming, and unmarshalling XML in Java</description>
 
+	<!--
+		The shade plugin publishes library/dependency-reduced-pom.xml as this artifact's pom, and it
+		copies only what this file declares, so the metadata Maven Central insists on cannot be
+		inherited here. Hence the literals rather than ${git.repo}, which the shade pom would write
+		out unresolved.
+	-->
+	<url>https://github.com/terminological/fluentxml</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Rob Challen</name>
+			<email>rob@terminological.co.uk</email>
+			<organization>terminological</organization>
+			<organizationUrl>https://www.terminological.co.uk</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:terminological/fluentxml.git</connection>
+		<developerConnection>scm:git:git@github.com:terminological/fluentxml.git</developerConnection>
+		<url>https://github.com/terminological/fluentxml</url>
+	</scm>
+
 	<dependencies>
 
 		<dependency>
