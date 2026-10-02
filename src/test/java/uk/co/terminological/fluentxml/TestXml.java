@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
@@ -640,7 +640,7 @@ public class TestXml {
 	public static class NestedJaxbPojo {
 		public String text;
 
-		@javax.xml.bind.annotation.XmlAttribute(name = "id")
+		@jakarta.xml.bind.annotation.XmlAttribute(name = "id")
 		public int z;
 	}
 }
