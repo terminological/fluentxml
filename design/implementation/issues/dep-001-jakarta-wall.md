@@ -1,6 +1,6 @@
 ---
 target-version: 1.2
-status: open
+status: done
 tags: dependencies, jakarta, breaking-change
 ---
 
@@ -36,3 +36,11 @@ Costs before this can merge:
 * Jar grows 14.03 MB to 14.94 MB: jaxb-runtime 4 pulls angus activation and mail service entries
   that the 2.3 line did not have.
 * Not attempted here: moxy 5.0.2, which is Java 17.
+
+## Resolution (2026-10-02)
+
+Not blocked after all: jakarta keeps a Java 11 floor. Released in 2.0.0 with
+`jakarta.xml.bind-api` 4.0.5, `org.glassfish.jaxb:jaxb-runtime` 4.0.9, moxy 4.0.9 and
+`jakarta.activation-api` 2.1.4, `maven.compiler.release=11`, 209/209 tests green and no
+`javax/xml/bind` classes in the artifact. What it did cost is a major version and a README
+migration note, because every consumer's `import javax.xml.bind.*` has to change.

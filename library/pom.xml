@@ -15,10 +15,8 @@
 	<description>Fluent XML API for building, querying, transforming, and unmarshalling XML in Java</description>
 
 	<!--
-		The shade plugin publishes library/dependency-reduced-pom.xml as this artifact's pom, and it
-		copies only what this file declares, so the metadata Maven Central insists on cannot be
-		inherited here. Hence the literals rather than ${git.repo}, which the shade pom would write
-		out unresolved.
+		Declared here, not inherited, so that the pom Maven Central validates and consumers read is
+		self-contained. Literals rather than ${git.repo} because this must resolve without a parent.
 	-->
 	<url>https://github.com/terminological/fluentxml</url>
 
@@ -106,40 +104,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.6.2</version>
-				<executions>
-					<execution>
-						<id>shade-library</id>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<shadedArtifactAttached>false</shadedArtifactAttached>
-							<minimizeJar>true</minimizeJar>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-										<exclude>META-INF/maven/**</exclude>
-										<exclude>META-INF/INDEX.LIST</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

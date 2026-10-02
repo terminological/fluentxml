@@ -1,6 +1,6 @@
 ---
 target-version: 1.1
-status: open
+status: done
 tags: build, publishing, blocker
 ---
 
@@ -19,3 +19,11 @@ config, distributionManagement). Confirm the parent is resolvable from Maven Cen
 tagging 1.1.
 
 [IMPACTS](/pom.xml)
+
+## Resolution (2026-10-02)
+
+`m2repo` 0.0.6 is on Central, the root pom references it, and 2.0.0 went out through
+`release:prepare` and `release:perform`, tag `fluentxml-parent-2.0.0`. The publish did expose two
+problems of its own: an scm inherited from a remote parent makes the release plugin append the
+artifactId to the clone url, fixed by declaring `<scm>` in all three poms in `4aaf85f`, and the
+artifact that came out was broken, see [dep-008](dep-008-jaxp-shading.md).
