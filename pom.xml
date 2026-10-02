@@ -45,6 +45,18 @@
 		<url>https://github.com/terminological/fluentxml/issues</url>
 	</issueManagement>
 
+	<!--
+		Declared here rather than inherited from m2repo. maven-release-plugin records an inherited
+		scm as empty and then builds a per-project url by appending the artifactId to the parent's,
+		which produced scm.url=scm:git:git@github.com:terminological/fluentxml.git/fluentxml-parent
+		and made release:perform die with "not a valid repository name".
+	-->
+	<scm>
+		<connection>scm:git:git@github.com:${git.repo}.git</connection>
+		<developerConnection>scm:git:git@github.com:${git.repo}.git</developerConnection>
+		<url>https://github.com/${git.repo}</url>
+	</scm>
+
 	<build>
 		<plugins>
 			<plugin>

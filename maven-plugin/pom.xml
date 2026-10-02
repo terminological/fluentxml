@@ -16,6 +16,13 @@
 	<name>FluentXML Maven Plugin</name>
 	<description>Maven plugin that derives a schema from an XML instance and generates JAXB sources from it</description>
 
+	<!-- Must be declared locally, see the note in the parent pom. -->
+	<scm>
+		<connection>scm:git:git@github.com:${git.repo}.git</connection>
+		<developerConnection>scm:git:git@github.com:${git.repo}.git</developerConnection>
+		<url>https://github.com/${git.repo}</url>
+	</scm>
+
 	<dependencies>
 
 		<dependency>
