@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.github.terminological</groupId>
 		<artifactId>fluentxml-parent</artifactId>
-		<version>2.0.0</version>
+		<version>2.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -42,7 +42,7 @@
 		<connection>scm:git:git@github.com:terminological/fluentxml.git</connection>
 		<developerConnection>scm:git:git@github.com:terminological/fluentxml.git</developerConnection>
 		<url>https://github.com/terminological/fluentxml</url>
-	  <tag>fluentxml-parent-2.0.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<dependencies>
