@@ -1,23 +1,28 @@
 # FluentXML
 
-A fluent Java library for XML manipulation with XPath 2.0 support, XSLT transformation, JAXB binding, and CSS selectors. The Maven plugin for XML-to-Java code generation is a separate artifact, `fluentxml-maven-plugin`.
+A fluent Java library for XML manipulation with XPath 3.1 support, XSLT transformation, JAXB binding, and CSS selectors. The Maven plugin for XML-to-Java code generation is a separate artifact, `fluentxml-maven-plugin`.
 
 ## Maven dependency
 
 ```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-
 <dependency>
     <groupId>io.github.terminological</groupId>
     <artifactId>fluentxml</artifactId>
-    <version>1.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
+
+## Changes in 2.0.0
+
+* JAXB moved from `javax.xml.bind` to `jakarta.xml.bind`. Every `import javax.xml.bind.*` in your
+  code becomes `import jakarta.xml.bind.*`. This is the one change that is not drop-in.
+* The Maven plugin is no longer part of this artifact. Use `io.github.terminological:fluentxml-maven-plugin`
+  instead, with goal prefix `xml`.
+* XPath is evaluated by Saxon-HE 12.10, so XPath 3.1 is available. The old Eclipse WST XPath 2
+  processor, its ICU4J dependency and the jitpack-only cssSelector dependency are gone, which is why
+  nothing needs the jitpack repository any more.
+* `XmlDocElement.doCssSelection` is live again.
+* Java 11 is the minimum, enforced with `maven.compiler.release`.
 
 ## Quick Start
 
@@ -310,6 +315,12 @@ Node rawNode = node.getAsNode();
 
 ## Maven Plugin
 
+Both goals are known to fail on Java 9 and later, because castor 1.3.1 reaches into
+`com.sun.org.apache.xml.internal.serialize`, which `java.xml` no longer exports. Run them on a
+Java 8 Maven, or add `--add-exports java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED`
+to `.mvn/jvm.config`, and see `design/implementation/issues/dep-007-castor-goals-broken-on-modern-jdks.md`
+for the options.
+
 ### xmltojava - Generate JAXB from XML
 
 Generates JAXB Java classes from sample XML files by first deriving an XSD schema:
@@ -318,7 +329,7 @@ Generates JAXB Java classes from sample XML files by first deriving an XSD schem
 <plugin>
     <groupId>io.github.terminological</groupId>
     <artifactId>fluentxml-maven-plugin</artifactId>
-    <version>1.0</version>
+    <version>2.0.0</version>
     <executions>
         <execution>
             <id>xmltojava</id>
@@ -347,7 +358,7 @@ Derives a W3C XML Schema from a sample XML file:
 <plugin>
     <groupId>io.github.terminological</groupId>
     <artifactId>fluentxml-maven-plugin</artifactId>
-    <version>1.0</version>
+    <version>2.0.0</version>
     <executions>
         <execution>
             <id>xmltoxsd</id>
