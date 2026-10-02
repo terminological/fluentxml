@@ -8,9 +8,17 @@ A fluent Java library for XML manipulation with XPath 3.1 support, XSLT transfor
 <dependency>
     <groupId>io.github.terminological</groupId>
     <artifactId>fluentxml</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
 </dependency>
 ```
+
+## Do not use 2.0.0
+
+It is still on Central and cannot be withdrawn. That jar shaded Saxon, Xerces and xmlresolver with
+`minimizeJar`, which discarded classes its own `META-INF/services` entries elected, so it could not
+parse an XML string and it hijacked JAXP provider selection in every consumer JVM. 2.1.0 is an
+ordinary jar with ordinary declared dependencies. If you are stuck on 2.0.0, declare a full
+`net.sf.saxon:Saxon-HE` before `fluentxml` in the pom, the ordering is what makes it work.
 
 ## Changes in 2.0.0
 
@@ -329,7 +337,7 @@ Generates JAXB Java classes from sample XML files by first deriving an XSD schem
 <plugin>
     <groupId>io.github.terminological</groupId>
     <artifactId>fluentxml-maven-plugin</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <executions>
         <execution>
             <id>xmltojava</id>
@@ -358,7 +366,7 @@ Derives a W3C XML Schema from a sample XML file:
 <plugin>
     <groupId>io.github.terminological</groupId>
     <artifactId>fluentxml-maven-plugin</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <executions>
         <execution>
             <id>xmltoxsd</id>

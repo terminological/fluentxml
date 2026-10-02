@@ -117,3 +117,37 @@ The check to keep, and it is one line: `unzip -l library/target/fluentxml-*.jar 
 must print nothing. Recorded in the release procedure. A repo test cannot stand in for it, surefire
 runs against `target/classes` plus the individual dependency jars, which is precisely why 209 tests
 passed while the shipped artifact could not parse a string.
+
+## The provided-scope jaxp-api theory, checked and rejected
+
+A second write-up of this bug, done from the consumer side against `1.1-SNAPSHOT`, blames
+`javax.xml.stream:jaxp-api:1.0.1` arriving at scope `provided` through Saxon, fluentxml code
+importing `com.sun.org.apache.xml.internal.*` directly, and shade therefore not bundling those
+classes, with `--add-exports` in the surefire `argLine` as the fix. That does not describe this
+repository, three checks:
+
+* `mvn dependency:tree` for the library module has **no** provided-scope entries and no `jaxp-api`
+  artifact anywhere. `org.xmlresolver:xmlresolver:5.3.3` arrives at `compile` through
+  `net.sf.saxon:Saxon-HE:12.10`, so shade bundled it, partially.
+* No source file imports `com.sun.org.apache.*`. It could not, because `maven.compiler.release=11`
+  compiles against `ct.sym`, which has no entries for non-exported packages, so such an import would
+  be a compile error rather than a runtime surprise.
+* The classes that are missing from the jar belong to compile-scope artifacts that shade did
+  include: `XIncludeAwareParserConfiguration` is Xerces' own class and `org.xmlresolver.loaders.*` is
+  xmlresolver's own. Scope filtering cannot remove them, `minimizeJar`'s reachability analysis can,
+  and the jar proves it did, 523 `org/xmlresolver` entries with two in `loaders` and none of the
+  Xerces configuration class.
+
+Where that analysis is right: on a modern JDK, **Saxon 10.9** does fail on the catalog loader path,
+and `--add-exports java.xml/com.sun.org.apache.xml.internal.utils=ALL-UNNAMED` does suppress it. But
+10.9 is the version the consumer pinned in front of fluentxml as the workaround for this bug, so the
+add-exports need is a consequence of the workaround. fluentxml's own declared stack, Saxon-HE 12.10
+with xmlresolver 5.3.3, ran the same XSLT path on JDK 25 with no add-exports flags at all.
+
+Which gives the consumer the simpler path: drop the Saxon 10.9 ordering hack when moving to 2.1.0
+and let 12.10 arrive transitively, rather than carrying `.mvn/jvm.config` forever. Restoring full
+shading is the wrong direction, a complete 14.6 MB JAXP bundle still elects global providers in
+every consumer JVM, and it recreates the gap between the IDE classpath and the published artifact
+that kept this invisible across two release generations.
+
+Not verified here: JDK 11 itself, this machine has 8, 21 and 25 installed.

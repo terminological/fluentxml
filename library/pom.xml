@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.github.terminological</groupId>
 		<artifactId>fluentxml-parent</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
+		<version>2.1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -15,8 +15,8 @@
 	<description>Fluent XML API for building, querying, transforming, and unmarshalling XML in Java</description>
 
 	<!--
-		Declared here, not inherited, so that the pom Maven Central validates and consumers read is
-		self-contained. Literals rather than ${git.repo} because this must resolve without a parent.
+		Declared locally rather than inherited from m2repo, so that the pom consumers and Maven Central
+		read is self-contained.
 	-->
 	<url>https://github.com/terminological/fluentxml</url>
 
