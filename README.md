@@ -1,6 +1,6 @@
 # FluentXML
 
-A fluent Java library for XML manipulation with XPath 2.0 support, XSLT transformation, JAXB binding, and CSS selectors. Also packaged as a Maven plugin for XML-to-Java code generation.
+A fluent Java library for XML manipulation with XPath 2.0 support, XSLT transformation, JAXB binding, and CSS selectors. The Maven plugin for XML-to-Java code generation is a separate artifact, `fluentxml-maven-plugin`.
 
 ## Maven dependency
 
@@ -317,7 +317,7 @@ Generates JAXB Java classes from sample XML files by first deriving an XSD schem
 ```xml
 <plugin>
     <groupId>io.github.terminological</groupId>
-    <artifactId>fluentxml</artifactId>
+    <artifactId>fluentxml-maven-plugin</artifactId>
     <version>1.0</version>
     <executions>
         <execution>
@@ -346,7 +346,7 @@ Derives a W3C XML Schema from a sample XML file:
 ```xml
 <plugin>
     <groupId>io.github.terminological</groupId>
-    <artifactId>fluentxml</artifactId>
+    <artifactId>fluentxml-maven-plugin</artifactId>
     <version>1.0</version>
     <executions>
         <execution>
@@ -365,7 +365,7 @@ Derives a W3C XML Schema from a sample XML file:
 ## Project Structure
 
 ```
-src/main/java/uk/co/terminological/fluentxml/
+library/src/main/java/uk/co/terminological/fluentxml/
   Xml.java           - Entry point: factories, parsing, XPath, transforms, JAXB
   XmlNode.java       - Base class: tree walk, type checking, XPath generation
   XmlElement.java    - Elements: building, querying, streaming, JAXB unmarshal
@@ -378,12 +378,12 @@ src/main/java/uk/co/terminological/fluentxml/
   XmlTransforms.java - Built-in transforms enum
   XmlException.java  - Exception class
 
-src/main/java/uk/co/terminological/maven/
+maven-plugin/src/main/java/uk/co/terminological/maven/
   XmlToJavaMojo.java    - Maven plugin: XML → JAXB
   CastorMojo.java       - Maven plugin: XML → XSD
   XmlJavaExecution.java - Plugin configuration object
 
-src/main/resources/xslt/
+library/src/main/resources/xslt/
   elements-to-lower-case.xsl
   elements-to-upper-case.xsl
   attrib-to-elements.xsl

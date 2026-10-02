@@ -13,8 +13,8 @@ public signatures, so it is a breaking change for consumers rather than a versio
 
 Decision needed before starting: does fluentxml 2.0 drop `javax`, or ship both?
 
-[IMPACTS](/src/main/java/uk/co/terminological/fluentxml/Xml.java)
-[IMPACTS](/src/main/java/uk/co/terminological/fluentxml/XmlElement.java)
+[IMPACTS](/library/src/main/java/uk/co/terminological/fluentxml/Xml.java)
+[IMPACTS](/library/src/main/java/uk/co/terminological/fluentxml/XmlElement.java)
 
 ## Attempt (2026-10-02)
 

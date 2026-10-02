@@ -14,8 +14,8 @@ Saxon is now a real compile dependency (Saxon-HE 12.10) and does XPath 3.1, so t
 dependency plus its XPathException plumbing can go. Check behaviour differences first:
 the current engine is strict about XPath 2 sequences, Saxon is not identically strict.
 
-[IMPACTS](/src/main/java/uk/co/terminological/fluentxml/XmlXPath.java)
-[IMPACTS](/src/main/java/uk/co/terminological/fluentxml/XmlList.java)
+[IMPACTS](/library/src/main/java/uk/co/terminological/fluentxml/XmlXPath.java)
+[IMPACTS](/library/src/main/java/uk/co/terminological/fluentxml/XmlList.java)
 
 ## Resolution (2026-10-02)
 

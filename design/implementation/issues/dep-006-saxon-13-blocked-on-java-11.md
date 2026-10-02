@@ -16,4 +16,4 @@ floor moves, change the version, set `maven.compiler.release` to 17, and re-run 
 version scan over the shaded jar to prove nothing else crept up.
 
 [IMPACTS](/pom.xml)
-[IMPACTS](/src/main/java/uk/co/terminological/fluentxml/XmlXsl.java)
+[IMPACTS](/library/src/main/java/uk/co/terminological/fluentxml/XmlXsl.java)
