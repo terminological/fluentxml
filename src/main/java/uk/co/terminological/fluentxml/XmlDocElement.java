@@ -2,8 +2,8 @@ package uk.co.terminological.fluentxml;
 
 import java.io.File;
 
-import org.sam.rosenthal.cssselectortoxpath.utilities.CssElementCombinatorPairsToXpath;
-import org.sam.rosenthal.cssselectortoxpath.utilities.CssSelectorStringSplitterException;
+import uk.co.terminological.fluentxml.css.CssElementCombinatorPairsToXpath;
+import uk.co.terminological.fluentxml.css.CssSelectorStringSplitterException;
 import org.w3c.dom.Element;
 
 /**
@@ -42,9 +42,9 @@ public class XmlDocElement extends XmlElement {
 
 	/**
 	 * Executes a CSS selector query on the document, converting it to XPath internally.
-	 * <p>Uses the cssSelector-to-xpath library to convert CSS selectors like
-	 * "div > p.class" to XPath expressions.</p>
-	 * @param selector the CSS selector string (e.g., "div.class", "a[href]", "ul > li:first-child")
+	 * <p>Uses the vendored {@link CssElementCombinatorPairsToXpath} converter to turn CSS
+	 * selectors like "div &gt; p.class" into XPath expressions.</p>
+	 * @param selector the CSS selector string (e.g., "div.class", "a[href]", "ul &gt; li:first-child")
 	 * @return an XmlXPath for retrieving matching elements
 	 * @throws XmlException if the selector is invalid or the XPath cannot be compiled
 	 */

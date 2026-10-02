@@ -96,7 +96,7 @@ public class TestXmlXPath {
 		Xml xml = Xml.fromStream(TestXml.class.getResourceAsStream("/catalog.xml"));
 		List<String> titles = xml.doXpath("//title").getManyAsStream(XmlElement.class)
 				.map(e -> e.getTextContent().get().trim())
-				.toList();
+				.collect(java.util.stream.Collectors.toList());
 		assertEquals(5, titles.size());
 	}
 

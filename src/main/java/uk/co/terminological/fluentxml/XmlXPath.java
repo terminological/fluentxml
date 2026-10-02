@@ -2,6 +2,7 @@ package uk.co.terminological.fluentxml;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -9,18 +10,21 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.eclipse.wst.xml.xpath2.api.Item;
-import org.eclipse.wst.xml.xpath2.api.ResultSequence;
-import org.eclipse.wst.xml.xpath2.api.XPath2Expression;
-import org.eclipse.wst.xml.xpath2.processor.Engine;
-import org.eclipse.wst.xml.xpath2.processor.internal.types.xerces.XercesTypeModel;
-import org.eclipse.wst.xml.xpath2.processor.util.DynamicContextBuilder;
-import org.eclipse.wst.xml.xpath2.processor.util.StaticContextBuilder;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import org.eclipse.wst.xml.xpath2.processor.internal.StaticNsNameError;
+import net.sf.saxon.om.NamespaceUri;
+import net.sf.saxon.type.ItemType;
+import net.sf.saxon.type.UType;
+import net.sf.saxon.xpath.XPathEvaluator;
+import net.sf.saxon.xpath.XPathExpressionImpl;
 
 /**
  * Holds the result of an XPath 2.0 query against XML nodes. Provides typed and untyped
@@ -67,7 +71,7 @@ public class XmlXPath<T extends XmlNode> {
 	/** Context nodes being queried */
 	List<T> context = new ArrayList<T>();
 	/** Compiled XPath expression */
-	XPath2Expression expr;
+	XPathExpression expr;
 	/** The original XPath expression string */
 	String xpath;
 	/** Default namespace abbreviation used for queries */
@@ -137,41 +141,103 @@ public class XmlXPath<T extends XmlNode> {
 		}
 	}
 
-	private StaticContextBuilder getEvaluationContexts() {
-		return getCompileContexts(false);
+	private XPathExpression compileXPath(String xpath) throws XPathExpressionException {
+		try {
+			return evaluator(false).compile(xpath);
+		} catch (XPathExpressionException e) {
+			// Probably an abbreviation that is only declared deeper in the document
+			return evaluator(true).compile(xpath);
+		}
 	}
 
-	private StaticContextBuilder getCompileContexts(boolean deep) {
-		StaticContextBuilder scb = new StaticContextBuilder();
-		if (context.size() == 0) return scb;
-		String defaultContext = context.get(0).getDom().getDocumentElement().getNamespaceURI();
-		if (defaultContext != null) {
-			scb.withDefaultNamespace(defaultContext);
-			scb.withNamespace(defaultNsAbbr, defaultContext);
-		}
-		for (T con : context) {
-			con.getXml().discoverDefaultNs();
-			if (deep) con.getXml().deepScanNs();
-			for (Map.Entry<String, String> entry : con.getXml().getAbbrevs().entrySet()) {
-				scb.withNamespace(entry.getKey(), entry.getValue());
+	private XPathEvaluator evaluator(boolean deep) {
+		XPathEvaluator evaluator = new XPathEvaluator();
+		evaluator.setNamespaceContext(namespaces(deep));
+		String defaultNs = defaultNamespace();
+		if (defaultNs != null) evaluator.getStaticContext().setDefaultElementNamespace(NamespaceUri.of(defaultNs));
+		return evaluator;
+	}
+
+	/**
+	 * Namespace context backed by the abbreviations known to the queried document: those
+	 * declared on its root element, those discovered by a deeper scan, and those registered
+	 * by the user with withNamespaceAbbreviation. Unprefixed names resolve to the default
+	 * namespace of the document, because JAXP exposes no XPath 2 default element namespace.
+	 * @param deep whether to deep scan for abbreviations before resolving
+	 * @return the namespace context to compile against
+	 */
+	private NamespaceContext namespaces(boolean deep) {
+		return new NamespaceContext() {
+			@Override
+			public String getNamespaceURI(String prefix) {
+				if (prefix == null) throw new IllegalArgumentException("XPath namespace prefix is null");
+				if (prefix.equals(XMLConstants.XML_NS_PREFIX)) return XMLConstants.XML_NS_URI;
+				if (context.isEmpty()) return XMLConstants.NULL_NS_URI;
+				Xml xml = context.get(0).getXml();
+				xml.discoverDefaultNs();
+				if (deep) xml.deepScanNs();
+				if (prefix.isEmpty()) {
+					String def = defaultNamespace();
+					return def == null ? XMLConstants.NULL_NS_URI : def;
+				}
+				String uri = xml.getAbbrevs().get(prefix);
+				if (uri == null && prefix.equals(defaultNsAbbr)) uri = defaultNamespace();
+				return uri == null ? XMLConstants.NULL_NS_URI : uri;
 			}
-		}
-		try {
-			scb.withTypeModel(new XercesTypeModel(context.get(0).getDom()));
-		} catch (Exception e) {
-			// Xpath on non schema aware model
-		}
-		return scb;
+
+			@Override
+			public String getPrefix(String namespaceURI) {
+				Iterator<String> prefixes = getPrefixes(namespaceURI);
+				return prefixes.hasNext() ? prefixes.next() : null;
+			}
+
+			@Override
+			public Iterator<String> getPrefixes(String namespaceURI) {
+				if (context.isEmpty()) return Collections.<String>emptyList().iterator();
+				List<String> prefixes = new ArrayList<String>();
+				for (Map.Entry<String, String> entry : context.get(0).getXml().getAbbrevs().entrySet()) {
+					if (entry.getValue().equals(namespaceURI)) prefixes.add(entry.getKey());
+				}
+				return prefixes.iterator();
+			}
+		};
 	}
 
-	private XPath2Expression compileXPath(String xpath) throws XPathExpressionException {
-		XPath2Expression tmpExpression;
+	private String defaultNamespace() {
+		if (context.isEmpty()) return null;
+		Node root = context.get(0).getDom().getDocumentElement();
+		return root == null ? null : root.getNamespaceURI();
+	}
+
+	/**
+	 * The JAXP return type to ask Saxon for: a node set for path expressions, otherwise the
+	 * atomic type the expression was statically typed as.
+	 * @return the QName return type for evaluation
+	 */
+	private QName returnType() {
+		ItemType primary = ((XPathExpressionImpl) expr).getInternalExpression().getStaticType().getPrimaryType();
+		if (!primary.isAtomicType()) return XPathConstants.NODESET;
+		UType type = primary.getUType();
+		if (type.equals(UType.NUMERIC)) return XPathConstants.NUMBER;
+		if (type.equals(UType.BOOLEAN)) return XPathConstants.BOOLEAN;
+		return XPathConstants.STRING;
+	}
+
+	private Object evaluate(T contextNode, QName returnType) throws XmlException {
 		try {
-			tmpExpression = new Engine().parseExpression(xpath, getCompileContexts(false));
-		} catch (StaticNsNameError e) {
-			tmpExpression = new Engine().parseExpression(xpath, getCompileContexts(true));
+			return expr.evaluate(contextNode.getRaw(), returnType);
+		} catch (XPathExpressionException e) {
+			throw new XmlException("Could not evaluate xPath: " + xpath, e);
 		}
-		return tmpExpression;
+	}
+
+	/** Same as evaluate but for the untyped accessors, which do not declare XmlException. */
+	private Object evaluateLenient(T contextNode, QName returnType) {
+		try {
+			return evaluate(contextNode, returnType);
+		} catch (XmlException e) {
+			throw new RuntimeException("Could not evaluate xPath: " + xpath, e);
+		}
 	}
 
 	// ==================== Single result accessors ====================
@@ -233,9 +299,10 @@ public class XmlXPath<T extends XmlNode> {
 	 */
 	public <U extends XmlNode> XmlList<U> getMany(Class<U> clazz) throws XmlException {
 		XmlList<U> out = new XmlList<U>();
-		StaticContextBuilder con = getEvaluationContexts();
-		ResultSequence result = expr.evaluate(new DynamicContextBuilder(con), rawNodeArray(context));
-		out.addAll(result.iterator(), context.get(0).xml);
+		if (expr == null) return out;
+		for (T contextNode : context) {
+			out.addAll((NodeList) evaluate(contextNode, XPathConstants.NODESET), context.get(0).getXml());
+		}
 		return out;
 	}
 
@@ -255,32 +322,21 @@ public class XmlXPath<T extends XmlNode> {
 	 * @return an Iterable of raw objects (Nodes, strings, numbers, etc.)
 	 */
 	public Iterable<Object> getMany() {
-		StaticContextBuilder con = getEvaluationContexts();
-		final ResultSequence result = expr.evaluate(new DynamicContextBuilder(con), rawNodeArray(context));
-		return new Iterable<Object>() {
-			final ResultSequence result2 = result;
-
-			@Override
-			public Iterator<Object> iterator() {
-				final Iterator<Item> items = result2.iterator();
-				return new Iterator<Object>() {
-					@Override
-					public boolean hasNext() {
-						return items.hasNext();
-					}
-
-					@Override
-					public Object next() {
-						return items.next().getNativeValue();
-					}
-
-					@Override
-					public void remove() {
-						items.remove();
-					}
-				};
+		List<Object> out = new ArrayList<Object>();
+		if (expr == null) return out;
+		QName returnType = returnType();
+		for (T contextNode : context) {
+			Object result = evaluateLenient(contextNode, returnType);
+			if (result instanceof NodeList) {
+				NodeList nodes = (NodeList) result;
+				for (int i = 0; i < nodes.getLength(); i++) {
+					out.add(nodes.item(i));
+				}
+			} else if (result != null) {
+				out.add(result);
 			}
-		};
+		}
+		return out;
 	}
 
 	/**
@@ -292,12 +348,4 @@ public class XmlXPath<T extends XmlNode> {
 	}
 
 	// ==================== Internal helpers ====================
-
-	private Object[] rawNodeArray(List<T> context2) {
-		List<Node> tmp = new ArrayList<>();
-		for (T t : context2) {
-			tmp.add(t.getRaw());
-		}
-		return tmp.toArray();
-	}
 }

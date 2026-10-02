@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.eclipse.wst.xml.xpath2.api.Item;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -109,16 +108,15 @@ public class XmlList<T extends XmlNode> implements Iterable<T> {
 	// ==================== Population ====================
 
 	/**
-	 * Adds all nodes from an XPath result iterator (internal use).
-	 * @param iterator the XPath Item iterator
+	 * Adds all nodes from an XPath result (internal use).
+	 * @param nodes the DOM node list returned by the XPath engine
 	 * @param xml the parent document context
 	 * @return this list for chaining
 	 * @throws XmlException if node conversion fails
 	 */
-	protected XmlList<T> addAll(Iterator<Item> iterator, Xml xml) throws XmlException {
-		while (iterator.hasNext()) {
-			Node node = (Node) iterator.next().getNativeValue();
-			cache.add(convertNode(node, xml));
+	protected XmlList<T> addAll(NodeList nodes, Xml xml) throws XmlException {
+		for (int i = 0; i < nodes.getLength(); i++) {
+			cache.add(convertNode(nodes.item(i), xml));
 		}
 		return this;
 	}
